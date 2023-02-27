@@ -1,0 +1,76 @@
+from .models import Ability
+from .serializers import AbilitySerializer
+from rest_framework.response import Response
+from rest_framework import serializers, generics
+from rest_framework import status
+
+class AbilityView(generics.GenericAPIView):
+
+    serializer_class = AbilitySerializer
+
+    def get(self, request):
+        abilities = Ability.objects.all().values()
+        total_abilities = abilities.count()
+        return Response({"status":status.HTTP_200_OK, "total": total_abilities, "data": abilities,})
+
+    def get_ability(self, name):
+        try:
+            return Ability.objects.get(name=name)
+        except:
+            return None
+
+    def post(self, request):
+
+        ability = self.get_ability(request.data['name'])
+        if ability:
+            return Response({"status": "fail", "message": f"ability with '{request.data['name']}' name already exists"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if not (request.data):
+            raise serializers.ValidationError({"message": "You must pass a data to create a Ability"})
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "ability": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class AbilityDetail(generics.GenericAPIView):
+    queryset = Ability.objects.all()
+    serializer_class = AbilitySerializer
+
+    def get_ability(self, pk):
+        try:
+            return Ability.objects.get(pk=pk)
+        except:
+            return None
+
+    def get(self, request, pk):
+        ability = self.get_ability(pk=pk)
+        if ability == None:
+            return Response({"status": "fail", "message": f"Ability with id: {pk} not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(ability)
+        return Response({"status": "success", "ability": serializer.data})
+
+    def patch(self, request, pk):
+        ability = self.get_ability(pk)
+        if ability == None:
+            return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(ability, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "ability": serializer.data})
+        return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        ability = self.get_ability(pk)
+        if ability == None:
+            return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        ability.delete()
+        return Response({"status":"success", "message":"ability deleted successfully"},status=status.HTTP_204_NO_CONTENT)
