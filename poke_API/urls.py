@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/pokemon/', include('pokemon.urls')),
     path('api/type/', include('type.urls')),
-    path('api/ability/', include('ability.urls'))
+    path('api/ability/', include('ability.urls')),
+    path('api/statistics/', include('pokemon_statistics.urls'))
 ]
 

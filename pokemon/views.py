@@ -5,8 +5,7 @@ from rest_framework import serializers, generics
 from rest_framework import status
 from .pagination import CustomPagination
 from rest_framework.pagination import LimitOffsetPagination
-from type.models import Type
-from type.serializers import TypeSerializer
+
 
 class PokemonView(generics.GenericAPIView):
 
@@ -16,7 +15,7 @@ class PokemonView(generics.GenericAPIView):
     def get(self, request):
         pokemons = Pokemon.objects.all().values()
         total_pokemons = pokemons.count()
-        return Response({"status":"success", "count":total_pokemons, "data":pokemons},status=status.HTTP_200_OK)
+        return Response({"status":"success","total":total_pokemons, "data":pokemons},status=status.HTTP_200_OK)
 
     def get_pokemon(self, name):
         try:
@@ -208,3 +207,4 @@ class PokemonAbility(generics.GenericAPIView):
             return Response(
                 {"status": "success", "message": "abilities deleted succesfully", "pokemon": serializer.data})
         return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
