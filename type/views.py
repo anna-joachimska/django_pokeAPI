@@ -1,3 +1,5 @@
+from rest_framework.pagination import LimitOffsetPagination
+
 from .models import Type
 from .serializers import TypeSerializer
 from rest_framework.response import Response
@@ -10,8 +12,15 @@ class TypeView(generics.GenericAPIView):
 
     def get(self, request):
         types = Type.objects.all().values()
-        total_types = types.count()
-        return Response({"status":status.HTTP_200_OK, "total": total_types, "data": types,})
+        if len(request.query_params) == 0:
+            total_types = types.count()
+            return Response({"status":status.HTTP_200_OK, "total": total_types, "data": types,})
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(types, request)
+        serializer = TypeSerializer(result_page, many=True, context={'request': request})
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        return response
+
 
     def get_type(self, name):
         try:

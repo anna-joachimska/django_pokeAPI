@@ -1,3 +1,5 @@
+from rest_framework.pagination import LimitOffsetPagination
+
 from .models import Ability
 from .serializers import AbilitySerializer
 from rest_framework.response import Response
@@ -10,8 +12,14 @@ class AbilityView(generics.GenericAPIView):
 
     def get(self, request):
         abilities = Ability.objects.all().values()
-        total_abilities = abilities.count()
-        return Response({"status":status.HTTP_200_OK, "total": total_abilities, "data": abilities,})
+        if len(request.query_params) == 0:
+            total_abilities = abilities.count()
+            return Response({"status":status.HTTP_200_OK, "total": total_abilities, "data": abilities,})
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(abilities, request)
+        serializer = AbilitySerializer(result_page, many=True, context={'request': request})
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        return response
 
     def get_ability(self, name):
         try:
