@@ -1,21 +1,39 @@
+from django.utils.datastructures import MultiValueDictKeyError
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Pokemon
 from .serializers import PokemonSerializer
 from rest_framework.response import Response
-from rest_framework import serializers, generics
+from rest_framework import serializers, generics, filters, mixins
 from rest_framework import status
 from .pagination import CustomPagination
 from rest_framework.pagination import LimitOffsetPagination
 
 
 class PokemonView(generics.GenericAPIView):
-
+    queryset = Pokemon.objects.all().values()
     serializer_class = PokemonSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    ordering_fields = ['id', 'name', 'hp', 'attack', 'defense', 'generation']
+    ordering = ['id']
 
     def get(self, request):
-        pokemons = Pokemon.objects.all().values()
-        total_pokemons = pokemons.count()
-        return Response({"status":"success","total":total_pokemons, "data":pokemons},status=status.HTTP_200_OK)
+        if len(request.query_params) == 0:
+            pokemons = Pokemon.objects.all().values()
+            total_pokemons = pokemons.count()
+            return Response({"status": "success", "total": total_pokemons, "data": pokemons}, status=status.HTTP_200_OK)
+        try :
+            if request.query_params['ordering'] is not None:
+                pokemons = Pokemon.objects.all().order_by(request.query_params['ordering']).values()
+                return Response(pokemons)
+        except MultiValueDictKeyError:
+            pokemons = Pokemon.objects.all().values()
+            paginator = LimitOffsetPagination()
+            result_page = paginator.paginate_queryset(pokemons, request)
+            serializer = PokemonSerializer(result_page, many=True, context={'request': request})
+            response = Response(serializer.data, status=status.HTTP_200_OK)
+            return response
 
     def get_pokemon(self, name):
         try:
