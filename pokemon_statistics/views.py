@@ -1,9 +1,11 @@
 from django.db import connection
 from pokemon.models import Pokemon
 from pokemon.serializers import PokemonSerializer
+from type.models import Type
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from rest_framework import status
+from django.db.models import Avg, Max, Count
 
 
 def dictfetchall(cursor):
@@ -60,17 +62,8 @@ class TypeWithHigestAvgDefense(generics.GenericAPIView):
 
 class CountPokemonsWithMoreThanXType(generics.GenericAPIView):
     def get(self, request, X):
-        query = 'SELECT count(pokemon_pokemon.id) AS pokemons_count ' \
-                'FROM (SELECT count(pokemon_pokemon_types.type_id) AS "count", pokemon_pokemon.id ' \
-                'FROM pokemon_pokemon_types, pokemon_pokemon ' \
-                'WHERE pokemon_pokemon.id=pokemon_pokemon_types.pokemon_id ' \
-                'GROUP BY pokemon_pokemon.id) AS types_count, pokemon_pokemon ' \
-                'WHERE count >%s GROUP BY types_count."count", pokemon_pokemon.id '\
-                'LIMIT 1'
-        cursor = connection.cursor()
-        cursor.execute(query,[X])
-        data = dictfetchall(cursor)
-        return Response(data, status=status.HTTP_200_OK)
+        data = Pokemon.objects.filter(types__gt=X).annotate(pokemons=Count('types')).values().count()
+        return Response({"pokemons_count":data}, status=status.HTTP_200_OK)
 
 class MostPopularType(generics.GenericAPIView):
     def get(self, request):
@@ -166,17 +159,8 @@ class AbilityWithHigestAvgDefense(generics.GenericAPIView):
 
 class CountPokemonsWithMoreThanXAbility(generics.GenericAPIView):
     def get(self, request, X):
-        query = 'SELECT count(pokemon_pokemon.id) AS pokemons_count ' \
-                'FROM (SELECT count(pokemon_pokemon_abilities.ability_id) AS "count", pokemon_pokemon.id ' \
-                'FROM pokemon_pokemon_abilities, pokemon_pokemon ' \
-                'WHERE pokemon_pokemon.id=pokemon_pokemon_abilities.pokemon_id ' \
-                'GROUP BY pokemon_pokemon.id) AS abilities_count, pokemon_pokemon ' \
-                'WHERE count >%s GROUP BY abilities_count."count", pokemon_pokemon.id '\
-                'LIMIT 1'
-        cursor = connection.cursor()
-        cursor.execute(query,[X])
-        data = dictfetchall(cursor)
-        return Response(data, status=status.HTTP_200_OK)
+        data = Pokemon.objects.filter(abilities__gt=X).annotate(pokemons=Count('abilities')).values().count()
+        return Response({"pokemons_count":data}, status=status.HTTP_200_OK)
 
 class MostPopularAbility(generics.GenericAPIView):
     def get(self, request):
