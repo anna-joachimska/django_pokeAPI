@@ -1,10 +1,10 @@
 from rest_framework.pagination import LimitOffsetPagination
-
 from .models import Type
 from .serializers import TypeSerializer
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from rest_framework import status
+from pokemon.models import Pokemon
 
 class TypeView(generics.GenericAPIView):
 
@@ -80,6 +80,8 @@ class TypeDetail(generics.GenericAPIView):
         if type == None:
             return Response({"status": "fail", "message": f"Type with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
-
+        if len(Pokemon.types.through.objects.filter(type_id=pk))>0:
+            return Response({"status": "fail", "message": f"Cannot delete type if pokemon has it"},
+                            status=status.HTTP_400_BAD_REQUEST)
         type.delete()
         return Response({"status":"success", "message":"type deleted successfully"},status=status.HTTP_204_NO_CONTENT)

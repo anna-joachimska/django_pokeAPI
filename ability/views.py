@@ -1,10 +1,10 @@
 from rest_framework.pagination import LimitOffsetPagination
-
 from .models import Ability
 from .serializers import AbilitySerializer
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from rest_framework import status
+from pokemon.models import Pokemon
 
 class AbilityView(generics.GenericAPIView):
 
@@ -79,6 +79,8 @@ class AbilityDetail(generics.GenericAPIView):
         if ability == None:
             return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
-
+        if len(Pokemon.abilities.through.objects.filter(ability_id=pk))>0:
+            return Response({"status": "fail", "message": f"Cannot delete ability if pokemon has it"},
+                            status=status.HTTP_400_BAD_REQUEST)
         ability.delete()
         return Response({"status":"success", "message":"ability deleted successfully"},status=status.HTTP_204_NO_CONTENT)
