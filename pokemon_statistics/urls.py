@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import TypeWithHigestAvgHp, TypeWithHigestAvgAttack, TypeWithHigestAvgDefense, \
     PokemonTypesCount, MostPopularType, MostPopularTypeWithPokemons, CountPokemonsWithMoreThanXType, \
-    AbilityWithHigestAvgHp, AbilityWithHigestAvgAttack, AbilityWithHigestAvgDefense, CountPokemonsWithMoreThanXAbility,\
+    AbilityWithHigestAvgHp, AbilityWithHigestAvgAttack, AbilityWithHigestAvgDefense, CountPokemonsWithMoreThanXAbility, \
     MostPopularAbility, MostPopularAbilityWithPokemons, PokemonAbilitiesCount
 
 urlpatterns = [

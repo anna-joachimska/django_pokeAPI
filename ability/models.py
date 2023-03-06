@@ -1,7 +1,8 @@
 from django.db import models
 
+
 class Ability(models.Model):
-    id = models.AutoField(primary_key=True,editable=False,)
+    id = models.AutoField(primary_key=True, editable=False, )
     name = models.CharField(max_length=70, blank=False, unique=True)
 
     def __str__(self):
