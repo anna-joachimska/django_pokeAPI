@@ -128,10 +128,10 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
         if serializer.is_valid():
             if pokemon.types.count() >= 2:
                 return Response({"status": "fail", "message": "this pokemon already has 2 types"},
-                            status=status.HTTP_400_BAD_REQUEST)
-            if len(request.data['types'])>2:
+                                status=status.HTTP_400_BAD_REQUEST)
+            if len(request.data['types']) > 2:
                 return Response({"status": "fail", "message": "cannot pass more than 2 types"},
-                            status=status.HTTP_400_BAD_REQUEST)
+                                status=status.HTTP_400_BAD_REQUEST)
             new_types_list = []
             old_types_list = []
             for type in request.data['types']:
@@ -210,10 +210,10 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
         if serializer.is_valid():
             if pokemon.abilities.count() >= 3:
                 return Response({"status": "fail", "message": "this pokemon already has 3 abilities"},
-                            status=status.HTTP_400_BAD_REQUEST)
-            if len(request.data['abilities'])>3:
+                                status=status.HTTP_400_BAD_REQUEST)
+            if len(request.data['abilities']) > 3:
                 return Response({"status": "fail", "message": "cannot pass more than 3 abilities"},
-                            status=status.HTTP_400_BAD_REQUEST)
+                                status=status.HTTP_400_BAD_REQUEST)
             new_abilities_list = []
             old_abilities_list = []
             for ability in request.data['abilities']:
