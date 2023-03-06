@@ -1,11 +1,10 @@
 from django.db import connection
 from pokemon.models import Pokemon
 from pokemon.serializers import PokemonSerializer
-from type.models import Type
 from rest_framework.response import Response
-from rest_framework import serializers, generics
+from rest_framework import generics
 from rest_framework import status
-from django.db.models import Avg, Max, Count
+from django.db.models import Count
 
 
 def dictfetchall(cursor):
