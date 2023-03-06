@@ -15,6 +15,7 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+
 class TypeWithHigestAvgHp(generics.GenericAPIView):
 
     def get(self, request):
@@ -60,16 +61,18 @@ class TypeWithHigestAvgDefense(generics.GenericAPIView):
         data = dictfetchall(cursor)
         return Response(data, status=status.HTTP_200_OK)
 
+
 class CountPokemonsWithMoreThanXType(generics.GenericAPIView):
     def get(self, request, X):
         data = Pokemon.objects.filter(types__gt=X).annotate(pokemons=Count('types')).values().count()
-        return Response({"pokemons_count":data}, status=status.HTTP_200_OK)
+        return Response({"pokemons_count": data}, status=status.HTTP_200_OK)
+
 
 class MostPopularType(generics.GenericAPIView):
     def get(self, request):
         query = 'SELECT id, name FROM ' \
                 '(SELECT max("pokemon_count") as "max_count", id , name  ' \
-                'FROM (SELECT count(pokemon_pokemon.id) AS pokemon_count, pokemon_pokemon_types.type_id '\
+                'FROM (SELECT count(pokemon_pokemon.id) AS pokemon_count, pokemon_pokemon_types.type_id ' \
                 'FROM pokemon_pokemon_types, pokemon_pokemon ' \
                 'WHERE pokemon_pokemon.id = pokemon_pokemon_types.pokemon_id ' \
                 'GROUP BY pokemon_pokemon_types.type_id ' \
@@ -109,7 +112,8 @@ class PokemonTypesCount(generics.GenericAPIView):
         pokemons = Pokemon.types.through.objects.all().values()
         type_pokemons = pokemons.filter(type_id=request.data['type'])
         total_type_pokemons = type_pokemons.count()
-        return Response({"status":"success","total":total_type_pokemons, "data":type_pokemons},status=status.HTTP_200_OK)
+        return Response({"status": "success", "total": total_type_pokemons, "data": type_pokemons},
+                        status=status.HTTP_200_OK)
 
 
 class AbilityWithHigestAvgHp(generics.GenericAPIView):
@@ -157,16 +161,18 @@ class AbilityWithHigestAvgDefense(generics.GenericAPIView):
         data = dictfetchall(cursor)
         return Response(data, status=status.HTTP_200_OK)
 
+
 class CountPokemonsWithMoreThanXAbility(generics.GenericAPIView):
     def get(self, request, X):
         data = Pokemon.objects.filter(abilities__gt=X).annotate(pokemons=Count('abilities')).values().count()
-        return Response({"pokemons_count":data}, status=status.HTTP_200_OK)
+        return Response({"pokemons_count": data}, status=status.HTTP_200_OK)
+
 
 class MostPopularAbility(generics.GenericAPIView):
     def get(self, request):
         query = 'SELECT id, name FROM ' \
                 '(SELECT max("pokemon_count") as "max_count", id , name  ' \
-                'FROM (SELECT count(pokemon_pokemon.id) AS pokemon_count, pokemon_pokemon_abilities.ability_id '\
+                'FROM (SELECT count(pokemon_pokemon.id) AS pokemon_count, pokemon_pokemon_abilities.ability_id ' \
                 'FROM pokemon_pokemon_abilities, pokemon_pokemon ' \
                 'WHERE pokemon_pokemon.id = pokemon_pokemon_abilities.pokemon_id ' \
                 'GROUP BY pokemon_pokemon_abilities.ability_id ' \
@@ -206,4 +212,5 @@ class PokemonAbilitiesCount(generics.GenericAPIView):
         pokemons = Pokemon.abilities.through.objects.all().values()
         ability_pokemons = pokemons.filter(ability_id=request.data['ability'])
         total_ability_pokemons = ability_pokemons.count()
-        return Response({"status":"success","total":total_ability_pokemons, "data":ability_pokemons},status=status.HTTP_200_OK)
+        return Response({"status": "success", "total": total_ability_pokemons, "data": ability_pokemons},
+                        status=status.HTTP_200_OK)
