@@ -1,7 +1,7 @@
 from django.utils.datastructures import MultiValueDictKeyError
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Pokemon
-from .serializers import PokemonSerializer
+from .serializers import PokemonSerializer, AddOrRemoveTypeFromPokemonSerializer
 from rest_framework.response import Response
 from rest_framework import serializers, generics, filters
 from rest_framework import status
@@ -101,7 +101,7 @@ class PokemonDetail(generics.GenericAPIView):
 
 class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
     queryset = Pokemon.objects.all()
-    serializer_class = PokemonSerializer
+    serializer_class = AddOrRemoveTypeFromPokemonSerializer
 
     def get_pokemon(self, pk):
         try:

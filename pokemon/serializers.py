@@ -11,3 +11,10 @@ class PokemonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pokemon
         fields = '__all__'
+
+class AddOrRemoveTypeFromPokemonSerializer(serializers.ModelSerializer):
+    types = TypeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Pokemon
+        fields = ['types']
