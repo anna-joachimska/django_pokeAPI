@@ -34,6 +34,12 @@ class PokemonView(generics.GenericAPIView):
             response = Response(serializer.data, status=status.HTTP_200_OK)
             return response
 
+    def get_pokemon(self, name):
+        try:
+            return Pokemon.objects.get(name=name)
+        except:
+            return None
+
     def post(self, request):
         pokemon = self.get_pokemon(request.data['name'])
         if pokemon:
@@ -163,7 +169,7 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
 
             if len(types_list) > 0:
                 return Response(
-                    {"status": "fail", "message": "this pokemon hasn't this type", "types_to_remove": types_list,
+                    {"status": "fail", "message": "this pokemon hasn't this types", "types_to_remove": types_list,
                      "existing_types": old_types_list},
                     status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -171,7 +177,7 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                     pokemon.types.remove(type)
 
             return Response(
-                {"status": "success", "message": "type deleted successfully", "pokemon": serializer.data})
+                {"status": "success", "message": "types deleted successfully", "pokemon": serializer.data})
         return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 

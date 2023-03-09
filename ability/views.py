@@ -2,7 +2,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from .models import Ability
 from .serializers import AbilitySerializer
 from rest_framework.response import Response
-from rest_framework import serializers, generics
+from rest_framework import generics
 from rest_framework import status
 from pokemon.models import Pokemon
 
@@ -28,14 +28,10 @@ class AbilityView(generics.GenericAPIView):
             return None
 
     def post(self, request):
-
         ability = self.get_ability(request.data['name'])
         if ability:
             return Response({"status": "fail", "message": f"ability with '{request.data['name']}' name already exists"},
                             status=status.HTTP_400_BAD_REQUEST)
-
-        if not (request.data):
-            raise serializers.ValidationError({"message": "You must pass a data to create a Ability"})
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
