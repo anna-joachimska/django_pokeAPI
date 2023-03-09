@@ -1,7 +1,8 @@
 from django.utils.datastructures import MultiValueDictKeyError
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Pokemon
-from .serializers import PokemonSerializer, AddOrRemoveTypeFromPokemonSerializer, AddOrRemoveAbilityFromPokemonSerializer
+from .serializers import PokemonSerializer, AddOrRemoveTypeFromPokemonSerializer, \
+    AddOrRemoveAbilityFromPokemonSerializer
 from rest_framework.response import Response
 from rest_framework import generics, filters
 from rest_framework import status
@@ -131,7 +132,8 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                 else:
                     new_types_list.append(type)
             if len(old_types_list) > 0:
-                return Response({"status": "fail", "message": "this pokemon already has this type", "existing_pokemon_types":old_types_list},
+                return Response({"status": "fail", "message": "this pokemon already has this type",
+                                 "existing_pokemon_types": old_types_list},
                                 status=status.HTTP_400_BAD_REQUEST)
             else:
                 for type in new_types_list:
@@ -160,8 +162,10 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                     old_types_list.append(type)
 
             if len(types_list) > 0:
-                return Response({"status": "fail", "message": "this pokemon hasn't this type", "types_to_remove":types_list, "existing_types":old_types_list},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"status": "fail", "message": "this pokemon hasn't this type", "types_to_remove": types_list,
+                     "existing_types": old_types_list},
+                    status=status.HTTP_400_BAD_REQUEST)
             else:
                 for type in old_types_list:
                     pokemon.types.remove(type)
@@ -213,7 +217,8 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
                 else:
                     new_abilities_list.append(ability)
             if len(old_abilities_list) > 0:
-                return Response({"status": "fail", "message": "this pokemon already has this abilities", "pokemon_abilities":old_abilities_list},
+                return Response({"status": "fail", "message": "this pokemon already has this abilities",
+                                 "pokemon_abilities": old_abilities_list},
                                 status=status.HTTP_400_BAD_REQUEST)
             else:
                 for ability in new_abilities_list:
@@ -242,7 +247,8 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
                     old_abilities_list.append(ability)
 
             if len(abilities_list) > 0:
-                return Response({"status": "fail", "message": "this pokemon hasn't this abilities", "abilities_to_remove":abilities_list, "existing_abilities": old_abilities_list},
+                return Response({"status": "fail", "message": "this pokemon hasn't this abilities",
+                                 "abilities_to_remove": abilities_list, "existing_abilities": old_abilities_list},
                                 status=status.HTTP_400_BAD_REQUEST)
             else:
                 for ability in old_abilities_list:
