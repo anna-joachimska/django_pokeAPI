@@ -57,7 +57,7 @@ class TypeDetail(generics.GenericAPIView):
 
     def get(self, request, pk):
         type = self.get_type(pk=pk)
-        if type == None:
+        if type is None:
             return Response({"status": "fail", "message": f"Type with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -66,7 +66,7 @@ class TypeDetail(generics.GenericAPIView):
 
     def patch(self, request, pk):
         type = self.get_type(pk)
-        if type == None:
+        if type is None:
             return Response({"status": "fail", "message": f"Type with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -78,7 +78,7 @@ class TypeDetail(generics.GenericAPIView):
 
     def delete(self, request, pk):
         type = self.get_type(pk)
-        if type == None:
+        if type is None:
             return Response({"status": "fail", "message": f"Type with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
         if len(Pokemon.types.through.objects.filter(type_id=pk)) > 0:

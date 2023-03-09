@@ -57,7 +57,7 @@ class AbilityDetail(generics.GenericAPIView):
 
     def get(self, request, pk):
         ability = self.get_ability(pk=pk)
-        if ability == None:
+        if ability is None:
             return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -66,7 +66,7 @@ class AbilityDetail(generics.GenericAPIView):
 
     def patch(self, request, pk):
         ability = self.get_ability(pk)
-        if ability == None:
+        if ability is None:
             return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -78,7 +78,7 @@ class AbilityDetail(generics.GenericAPIView):
 
     def delete(self, request, pk):
         ability = self.get_ability(pk)
-        if ability == None:
+        if ability is None:
             return Response({"status": "fail", "message": f"Ability with id: {pk} not found"},
                             status=status.HTTP_404_NOT_FOUND)
         if len(Pokemon.abilities.through.objects.filter(ability_id=pk)) > 0:
