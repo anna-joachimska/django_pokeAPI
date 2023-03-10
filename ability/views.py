@@ -14,12 +14,11 @@ class AbilityView(generics.GenericAPIView):
         abilities = Ability.objects.all().values()
         if len(request.query_params) == 0:
             total_abilities = abilities.count()
-            return Response({"status": status.HTTP_200_OK, "total": total_abilities, "data": abilities, })
+            return Response({"status": status.HTTP_200_OK, "total": total_abilities, "data": abilities})
         paginator = LimitOffsetPagination()
         result_page = paginator.paginate_queryset(abilities, request)
         serializer = AbilitySerializer(result_page, many=True, context={'request': request})
-        response = Response(serializer.data, status=status.HTTP_200_OK)
-        return response
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_ability(self, name):
         try:
@@ -37,8 +36,7 @@ class AbilityView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "ability": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AbilityDetail(generics.GenericAPIView):

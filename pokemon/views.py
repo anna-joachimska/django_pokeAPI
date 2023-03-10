@@ -31,8 +31,7 @@ class PokemonView(generics.GenericAPIView):
             paginator = LimitOffsetPagination()
             result_page = paginator.paginate_queryset(pokemons, request)
             serializer = PokemonSerializer(result_page, many=True, context={'request': request})
-            response = Response(serializer.data, status=status.HTTP_200_OK)
-            return response
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_pokemon(self, name):
         try:
@@ -51,8 +50,7 @@ class PokemonView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "pokemon": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PokemonDetail(generics.GenericAPIView):
@@ -123,13 +121,7 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                             status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.serializer_class(pokemon, data=request.data, partial=True)
-        if serializer.is_valid():
-            if pokemon.types.count() >= 2:
-                return Response({"status": "fail", "message": "this pokemon already has 2 types"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if len(request.data['types']) > 2:
-                return Response({"status": "fail", "message": "cannot pass more than 2 types"},
-                                status=status.HTTP_400_BAD_REQUEST)
+        if serializer.validate_add(data=request.data) and serializer.is_valid():
             new_types_list = []
             old_types_list = []
             for type in request.data['types']:
@@ -207,14 +199,7 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
                             status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.serializer_class(pokemon, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            if pokemon.abilities.count() >= 3:
-                return Response({"status": "fail", "message": "this pokemon already has 3 abilities"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if len(request.data['abilities']) > 3:
-                return Response({"status": "fail", "message": "cannot pass more than 3 abilities"},
-                                status=status.HTTP_400_BAD_REQUEST)
+        if serializer.validate_add(data=request.data) and serializer.is_valid():
             new_abilities_list = []
             old_abilities_list = []
             for ability in request.data['abilities']:

@@ -14,12 +14,11 @@ class TypeView(generics.GenericAPIView):
         types = Type.objects.all().values()
         if len(request.query_params) == 0:
             total_types = types.count()
-            return Response({"status": status.HTTP_200_OK, "total": total_types, "data": types, })
+            return Response({"status": status.HTTP_200_OK, "total": total_types, "data": types})
         paginator = LimitOffsetPagination()
         result_page = paginator.paginate_queryset(types, request)
         serializer = TypeSerializer(result_page, many=True, context={'request': request})
-        response = Response(serializer.data, status=status.HTTP_200_OK)
-        return response
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_type(self, name):
         try:
@@ -37,8 +36,7 @@ class TypeView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "type": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TypeDetail(generics.GenericAPIView):

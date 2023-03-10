@@ -1,4 +1,3 @@
-from django.db import connection
 from pokemon.models import Pokemon
 from type.models import Type
 from ability.models import Ability
