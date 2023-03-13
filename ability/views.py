@@ -20,18 +20,7 @@ class AbilityView(generics.GenericAPIView):
         serializer = AbilitySerializer(result_page, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_ability(self, name):
-        try:
-            return Ability.objects.get(name=name)
-        except:
-            return None
-
     def post(self, request):
-        ability = self.get_ability(request.data['name'])
-        if ability:
-            return Response({"status": "fail", "message": f"ability with '{request.data['name']}' name already exists"},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()

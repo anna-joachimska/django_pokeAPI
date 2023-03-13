@@ -33,18 +33,7 @@ class PokemonView(generics.GenericAPIView):
             serializer = PokemonSerializer(result_page, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_pokemon(self, name):
-        try:
-            return Pokemon.objects.get(name=name)
-        except:
-            return None
-
     def post(self, request):
-        pokemon = self.get_pokemon(request.data['name'])
-        if pokemon:
-            return Response({"status": "fail", "message": f"pokemon with '{request.data['name']}' name already exists"},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -79,6 +68,7 @@ class PokemonDetail(generics.GenericAPIView):
                             status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.serializer_class(pokemon, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "pokemon": serializer.data})
@@ -139,7 +129,6 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
 
             return Response(
                 {"status": "success", "message": "type added successfully", "pokemon": serializer.data})
-
         return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
@@ -158,7 +147,6 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                     types_list.append(type)
                 else:
                     old_types_list.append(type)
-
             if len(types_list) > 0:
                 return Response(
                     {"status": "fail", "message": "this pokemon hasn't this types", "types_to_remove": types_list,
@@ -217,7 +205,6 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
 
             return Response(
                 {"status": "success", "message": "ability added successfully", "pokemon": serializer.data})
-
         return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
@@ -236,7 +223,6 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
                     abilities_list.append(ability)
                 else:
                     old_abilities_list.append(ability)
-
             if len(abilities_list) > 0:
                 return Response({"status": "fail", "message": "this pokemon hasn't this abilities",
                                  "abilities_to_remove": abilities_list, "existing_abilities": old_abilities_list},

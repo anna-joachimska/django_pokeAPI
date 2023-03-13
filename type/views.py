@@ -20,18 +20,7 @@ class TypeView(generics.GenericAPIView):
         serializer = TypeSerializer(result_page, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_type(self, name):
-        try:
-            return Type.objects.get(name=name)
-        except:
-            return None
-
     def post(self, request):
-        type = self.get_type(request.data['name'])
-        if type:
-            return Response({"status": "fail", "message": f"type with '{request.data['name']}' name already exists"},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
