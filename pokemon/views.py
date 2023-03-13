@@ -121,7 +121,7 @@ class AddOrRemoveTypeToPokemon(generics.GenericAPIView):
                     new_types_list.append(type)
             if len(old_types_list) > 0:
                 return Response({"status": "fail", "message": "this pokemon already has this type",
-                                 "existing_pokemon_types": old_types_list},
+                                 "existing_types": old_types_list, "new_types":new_types_list},
                                 status=status.HTTP_400_BAD_REQUEST)
             else:
                 for type in new_types_list:
@@ -197,7 +197,7 @@ class AddOrRemoveAbilityFromPokemon(generics.GenericAPIView):
                     new_abilities_list.append(ability)
             if len(old_abilities_list) > 0:
                 return Response({"status": "fail", "message": "this pokemon already has this abilities",
-                                 "pokemon_abilities": old_abilities_list},
+                                 "existing_abilities": old_abilities_list, "new_abilities":new_abilities_list},
                                 status=status.HTTP_400_BAD_REQUEST)
             else:
                 for ability in new_abilities_list:
